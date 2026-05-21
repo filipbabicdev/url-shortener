@@ -39,7 +39,8 @@ go.work.sum
 # Logs
 *.log
 
+# Built binary
+url-shortener
+
 # AI generated files
 CLAUDE.md
-
-EOF
