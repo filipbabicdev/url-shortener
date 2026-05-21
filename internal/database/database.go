@@ -16,14 +16,14 @@ func NewPool(ctx context.Context, cfg *config.Config) (*pgxpool.Pool, error) {
 
 	poolConfig.MaxConns = cfg.DBMaxConns
 	poolConfig.MinConns = cfg.DBMinConns
-	poolConfig.ConnMaxLifetime = cfg.DBConnMaxLifetime
+	poolConfig.MaxConnLifetime = cfg.DBConnMaxLifetime
 
 	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
-    	return nil, err
+		return nil, err
 	}
 	if err := pool.Ping(ctx); err != nil {
-    	return nil, err
+		return nil, err
 	}
 
 	return pool, nil
