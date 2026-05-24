@@ -1,0 +1,21 @@
+# Version control
+.git
+.gitignore
+
+# Secrets — never bake into the image
+.env
+.env.local
+*.local
+
+# Docs / dev files not needed in the build
+README.md
+*.md
+.vscode/
+.idea/
+
+# Build artifacts
+server
+url-shortener
+*.exe
+*.test
+*.out

@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: url
+      POSTGRES_PASSWORD: url
+      POSTGRES_DB: url
+    ports:
+      - "5432:5432"
+    volumes:
+      # Named volume -> data survives `docker compose down` (persistence test).
+      - pgdata:/var/lib/postgresql/data
+      # Migrations run automatically on FIRST volume creation.
+      # Postgres executes every .sql in this dir at init time.
+      # Local dev parity without a separate migration tool.
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      # App waits until Postgres actually accepts connections,
+      # not just until the container starts (avoids startup race).
+      test: [ "CMD-SHELL", "pg_isready -U url -d url" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8090:8090"
+    restart: on-failure
+    environment:
+      PORT: "8090"
+      ENV: development
+      # Service name `db` resolves via compose's internal DNS.
+      DATABASE_URL: "postgres://url:url@db:5432/url?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
