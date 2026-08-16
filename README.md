@@ -4,7 +4,7 @@ A URL shortener written in Go. Takes a long URL, returns a short code, and
 redirects on lookup. Built as a portfolio project to demonstrate idiomatic
 Go backend structure and a well-known system-design pattern (Base62 ID encoding).
 
-**Live demo:** https://url-shortener-70oc.onrender.com
+**Live demo:** https://url-shortener-tyag.onrender.com
 
 > Deployed on Render (Docker) with a managed PostgreSQL database on Neon.
 > Free tier, so the first request after idle may take 30-50s to wake (cold start).
@@ -103,9 +103,18 @@ the build simple (no C toolchain).
 **Healthcheck-gated startup** — in docker-compose the app waits until Postgres
 reports healthy before connecting, avoiding a startup race.
 
+### Known tradeoff: migrations are environment-specific
+
+Schema is applied through Postgres's `docker-entrypoint-initdb.d`, which only
+runs locally and only on first volume creation. The managed database was
+migrated by hand on first deploy. This works for a single-table MVP but doesn't
+version the schema or survive a rebuild — see the roadmap.
+
 ## Roadmap
 
 - [x] Deploy to Render with managed Postgres (Neon)
+- [ ] Replace init-script migrations with embedded goose (parity with
+      [finance-tracker-api](https://github.com/filipbabicdev/finance-tracker-api))
 - [ ] Graceful shutdown (handle `SIGTERM`, drain in-flight requests)
 - [ ] Click analytics (hit counter per code)
 - [ ] Rate limiting on `/shorten`
