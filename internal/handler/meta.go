@@ -109,3 +109,22 @@ func RootHandler(r chi.Router, env string) http.HandlerFunc {
 		})
 	}
 }
+
+type errorResponse struct {
+	Error string `json:"error"`
+}
+
+// writeJSONError is the shared JSON error shape for the whole API --
+// {"error": "..."} -- so a 404 from NoRouteHandler looks like every other
+// error response instead of a one-off.
+func writeJSONError(w http.ResponseWriter, status int, msg string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(errorResponse{Error: msg})
+}
+
+func NoRouteHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		writeJSONError(w, http.StatusNotFound, "route not found")
+	}
+}

@@ -11,5 +11,6 @@ func SetupRoutes(r *chi.Mux, handler *URLHandler, db pinger, env string) http.Ha
 	r.Get("/health", HealthHandler(db))
 	r.Get("/{code}", handler.Redirect)
 	r.Get("/", RootHandler(r, env))
+	r.NotFound(NoRouteHandler())
 	return r
 }

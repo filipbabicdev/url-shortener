@@ -29,17 +29,17 @@ func (h *URLHandler) Shorten(w http.ResponseWriter, r *http.Request) {
 	var req request
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil || req.URL == "" {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	if parsedURL, err := url.ParseRequestURI(req.URL); err != nil || (parsedURL.Scheme != "http" && parsedURL.Scheme != "https") {
-		http.Error(w, "Invalid URL format", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "Invalid URL format")
 		return
 	}
 
 	parsedURL, err := h.repo.Create(r.Context(), req.URL)
 	if err != nil {
-		http.Error(w, "Failed to shorten URL", http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "Failed to shorten URL")
 		return
 	}
 
@@ -60,11 +60,11 @@ func (h *URLHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 
 	url, err := h.repo.GetByShortCode(r.Context(), code)
 	if err == pgx.ErrNoRows {
-		http.Error(w, "URL not found", http.StatusNotFound)
+		writeJSONError(w, http.StatusNotFound, "URL not found")
 		return
 	}
 	if err != nil {
-		http.Error(w, "Failed to retrieve URL", http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "Failed to retrieve URL")
 		return
 	}
 
