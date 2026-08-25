@@ -40,8 +40,8 @@ go.work.sum
 *.log
 
 # Built binary
-url-shortener
-server
+/url-shortener
+/server
 
 # AI generated files
 CLAUDE.md
