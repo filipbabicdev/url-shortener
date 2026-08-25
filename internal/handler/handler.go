@@ -1,15 +1,15 @@
 package handler
 
 import (
-	"net/http"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/filipbabicdev/url-shortener/internal/repository"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5"
 )
 
 type URLHandler struct {
@@ -51,8 +51,9 @@ func (h *URLHandler) Shorten(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response) 
+	json.NewEncoder(w).Encode(response)
 }
+
 // GET /{code}
 func (h *URLHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
@@ -68,9 +69,4 @@ func (h *URLHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, url.OriginalURL, http.StatusFound)
-}
-// GET /health — health check
-func (h *URLHandler) HealthCheck(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "OK")
 }

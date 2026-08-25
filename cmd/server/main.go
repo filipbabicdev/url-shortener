@@ -31,7 +31,7 @@ func main() {
 	urlHandler := handler.NewURLHandler(urlRepo)
 
 	r := chi.NewRouter()
-	handler.SetupRoutes(r, urlHandler)
+	handler.SetupRoutes(r, urlHandler, dbPool)
 
 	log.Printf("Starting server on port %s...", cfg.ServerPort)
 	server := http.Server{
